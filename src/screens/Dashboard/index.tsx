@@ -1,7 +1,14 @@
 import React from 'react';
-import { Text } from 'react-native';
-import { Container, Title } from './styles';
-import theme from '../../global/styles/theme'
+import { 
+    Container, 
+    Header, 
+    UserWrapper,
+    UserInfo,
+    Photo,
+    User,
+    UserGreeting,
+    UserName
+} from './styles';
 
 export function Dashboard() {
 
@@ -9,12 +16,35 @@ export function Dashboard() {
         
         <Container>
 
-            <Title>Dashboard</Title>
+            <Header>
+
+                <UserWrapper>
+
+                    <UserInfo>
+
+                        <Photo 
+                            source={{ uri: 'https://avatars.githubusercontent.com/u/5264225?v=4'}}
+                        />
+
+                        <User>
+                            
+                            <UserGreeting>Olá,</UserGreeting>
+                            
+                            <UserName>Lupércio</UserName>
+
+                        </User>
+
+
+                    </UserInfo>
+
+
+                </UserWrapper>
+
+
+            </Header>
 
         </Container>
-        
 
     );
-
 
 }
