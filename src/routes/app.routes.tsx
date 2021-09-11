@@ -26,6 +26,7 @@ export function AppRoutes() {
                     paddingVertical: Platform.OS == 'ios' ? 20 : 0,
                     height: 88
                 }
+                
             })}
         
         >
@@ -43,7 +44,8 @@ export function AppRoutes() {
                             color={color}
                         />
 
-                    ))
+                    )),
+                    headerShown: false
                 }}
             />
             
@@ -60,7 +62,8 @@ export function AppRoutes() {
                             color={color}
                         />
 
-                    ))
+                    )),
+                    headerShown: false
                 }}
             />
 
@@ -77,7 +80,8 @@ export function AppRoutes() {
                             color={color}
                         />
 
-                    ))
+                    )),
+                    headerShown: false
                 }}
             />
 

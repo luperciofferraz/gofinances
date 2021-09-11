@@ -14,7 +14,8 @@ import {
     HighlightCards,
     Transactions,
     Title,
-    TransactionList
+    TransactionList,
+    LogoutButton
 } from './styles';
 
 const data: DataListProps[] = [
@@ -87,8 +88,9 @@ export function Dashboard() {
 
                     </UserInfo>
 
-                    <Icon name='power' />
-
+                    <LogoutButton onPress={()=>{}} >
+                        <Icon name='power' />
+                    </LogoutButton>
                 </UserWrapper>
 
 
