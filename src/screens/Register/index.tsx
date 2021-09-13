@@ -52,8 +52,6 @@ export function Register() {
     const [transactionType, setTransactionType] = useState('');
     const [categoryModalOpen, setCategoryModalOpen] = useState(false);
 
-    const datakey = '@gofinances:transactions';
-    
     const [category, setCategory] = useState({
         key: 'category',
         name: 'Categoria'
@@ -83,6 +81,8 @@ export function Register() {
     }
 
     async function handleRegister(form: FormData) {
+
+        const datakey = '@gofinances:transactions';
 
         if (!transactionType) {
             return Alert.alert('Selecione o Tipo de Transação');
