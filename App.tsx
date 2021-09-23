@@ -3,6 +3,7 @@ import AppLoading from 'expo-app-loading';
 import { StatusBar } from 'react-native';
 import { ThemeProvider } from 'styled-components';
 import { NavigationContainer } from '@react-navigation/native';
+import { AuthProvider } from './src/hooks/auth';
 import 'intl';
 import 'intl/locale-data/jsonp/pt-BR';
 
@@ -36,7 +37,11 @@ export default function App() {
       <ThemeProvider theme={theme}>
         <NavigationContainer>
           <StatusBar barStyle="light-content" backgroundColor={theme.colors.primary} />
-          <SignIn />
+          
+          <AuthProvider> 
+            <SignIn />
+          </AuthProvider>
+
         </NavigationContainer>
       </ThemeProvider>
   );
