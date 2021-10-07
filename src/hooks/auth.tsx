@@ -1,10 +1,10 @@
-import React, { createContext, ReactNode, useContext, useState } from 'react';
+import React, { createContext, ReactNode, useContext, useState, useEffect } from 'react';
 import * as AuthSession from 'expo-auth-session';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const { CLIENT_ID } = process.env;
-const { REDIRECT_URI } = process.env;
+//const CLIENT_ID = process.env.CLIENT_ID;
+//const REDIRECT_URI = process.env.REDIRECT_URI;
 interface AuthProviderProps {
     children: ReactNode;
 }
@@ -20,6 +20,8 @@ interface IAuthContextData {
     user: User;
     signInWithGoogle(): Promise<void>;
     signInWithApple(): Promise<void>;
+    signOut(): Promise<void>;
+    userStorageLoading: boolean;
 }
 
 interface AuthorizationResponse {
@@ -36,6 +38,9 @@ export const AuthContext = createContext({ } as IAuthContextData);
 function AuthProvider({ children } : AuthProviderProps) {
 
     const [user, setUser] = useState<User>({} as User);
+    const [userStorageLoading, setUserStorageLoading] = useState(true);
+
+    const userStorageKey = '@gofinances:user';
 
     async function signInWithGoogle() {
 
@@ -43,6 +48,11 @@ function AuthProvider({ children } : AuthProviderProps) {
 
             const RESPONSE_TYPE = 'token';
             const SCOPE = encodeURI('profile email');
+            const REDIRECT_URI = process.env.CLIENT_ID;
+            const CLIENT_ID = process.env.REDIRECT_URI;
+
+            console.log(CLIENT_ID);
+            console.log(REDIRECT_URI);
 
             const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}&scope=${SCOPE}`;
 
@@ -58,19 +68,27 @@ function AuthProvider({ children } : AuthProviderProps) {
 
                     id: userInfo.id,
                     email: userInfo.email,
-                    name: userInfo.response,
-                    photo: userInfo.response
+                    name: userInfo.name,
+                    photo: userInfo.picture
 
                 }
 
+                console.log(userInfo);
+                console.log(userLogged);
+
                 setUser(userLogged);
-                await AsyncStorage.setItem('@gofinances:user', JSON.stringify(userLogged));
+                await AsyncStorage.setItem(userStorageKey, JSON.stringify(userLogged));
             }
         }
         catch(error) {
             throw new Error(error);
         }
 
+    }
+
+    async function signOut() {
+        await AsyncStorage.removeItem(userStorageKey);
+        setUser({} as User);
     }
 
     async function signInWithApple() {
@@ -90,17 +108,20 @@ function AuthProvider({ children } : AuthProviderProps) {
 
             if (credential) {
                 
+                const name = credential.fullName!.givenName!;
+                const photo = `https://ui-avatars.com/api/?name=${name}&length=1`;
+
                 const userLogged = {
 
                     id: String(credential.user),
                     email: credential.email!,
-                    name: credential.fullName!.givenName!,
-                    photo: undefined
+                    name,
+                    photo 
 
                 }
 
                 setUser(userLogged);
-                await AsyncStorage.setItem('@gofinances:user', JSON.stringify(userLogged));
+                await AsyncStorage.setItem(userStorageKey, JSON.stringify(userLogged));
             }
 
         }
@@ -110,9 +131,34 @@ function AuthProvider({ children } : AuthProviderProps) {
 
     }
 
+    useEffect(()=> {
+
+        loadUserStorageData();
+
+    } , []);
+
+    async function loadUserStorageData() {
+
+        const userStoraged = await AsyncStorage.getItem(userStorageKey);
+
+        if (userStoraged) {
+            const userLogged = JSON.parse(userStoraged) as User;
+            setUser(userLogged);
+        }
+
+        setUserStorageLoading(false);
+
+    }
+
     return (
 
-        <AuthContext.Provider value = { { user, signInWithGoogle, signInWithApple } }>
+        <AuthContext.Provider value = { 
+            { user, 
+              signInWithGoogle, 
+              signInWithApple, 
+              signOut,
+              userStorageLoading 
+            } }>
 
             { children }
 

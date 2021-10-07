@@ -2,8 +2,7 @@ import React from 'react';
 import AppLoading from 'expo-app-loading';
 import { StatusBar } from 'react-native';
 import { ThemeProvider } from 'styled-components';
-import { NavigationContainer } from '@react-navigation/native';
-import { AuthProvider } from './src/hooks/auth';
+import { AuthProvider, useAuth } from './src/hooks/auth';
 import 'intl';
 import 'intl/locale-data/jsonp/pt-BR';
 
@@ -14,14 +13,12 @@ import {
   Poppins_700Bold
 } from '@expo-google-fonts/poppins';
 
-import { Dashboard } from './src/screens/Dashboard';
-import { Register } from './src/screens/Register';
-import { CategorySelect } from './src/screens/CategorySelect';
 import theme from './src/global/styles/theme';
-import { AppRoutes } from './src/routes/app.routes';
-import { SignIn } from './src/screens/SignIn';
+import { Routes } from './src/routes';
 
 export default function App() {
+
+  const { userStorageLoading } = useAuth();
 
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
@@ -29,20 +26,16 @@ export default function App() {
     Poppins_700Bold
   });
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded || userStorageLoading) {
     return <AppLoading />
   }
 
   return (
       <ThemeProvider theme={theme}>
-        <NavigationContainer>
           <StatusBar barStyle="light-content" backgroundColor={theme.colors.primary} />
-          
           <AuthProvider> 
-            <SignIn />
+            <Routes />
           </AuthProvider>
-
-        </NavigationContainer>
       </ThemeProvider>
   );
 }

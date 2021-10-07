@@ -5,6 +5,7 @@ import { HighlighCard } from '../../components/HighlightCard';
 import { TransactionCard, TransactionCardProps } from '../../components/TransactionCard';
 import { useFocusEffect } from '@react-navigation/native';
 import { useTheme } from 'styled-components';
+import { useAuth } from '../../hooks/auth';
 
 import { 
     Container, 
@@ -39,6 +40,8 @@ interface HighlightData {
 
 export function Dashboard() {
 
+    const { signOut, user } = useAuth();
+
     const [isLoading, setIsLoading] = useState(true);
     const [transactions, setTransactions] = useState<DataListProps[]>([]);
     const [highlightData, setHighlightData] = useState<HighlightData>({} as HighlightData);
@@ -57,6 +60,10 @@ export function Dashboard() {
 
         return `${lastTransaction.getDate()} de ${lastTransaction.toLocaleString('pt-BR', { month: 'long' })}`;
 
+    }
+
+    async function handleSignOut() {
+        await signOut();
     }
 
     async function loadTransactions() {
@@ -180,21 +187,21 @@ export function Dashboard() {
                             <UserInfo>
 
                                 <Photo 
-                                    source={{ uri: 'https://avatars.githubusercontent.com/u/5264225?v=4'}}
+                                    source={{ uri: user.photo}}
                                 />
 
                                 <User>
                                     
                                     <UserGreeting>Olá,</UserGreeting>
                                     
-                                    <UserName>Lupércio</UserName>
+                                    <UserName>{user.name}</UserName>
 
                                 </User>
 
 
                             </UserInfo>
 
-                            <LogoutButton onPress={()=>{}} >
+                            <LogoutButton onPress={handleSignOut} >
                                 <Icon name='power' />
                             </LogoutButton>
                         </UserWrapper>
