@@ -3,8 +3,8 @@ import * as AuthSession from 'expo-auth-session';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-//const CLIENT_ID = process.env.CLIENT_ID;
-//const REDIRECT_URI = process.env.REDIRECT_URI;
+const { CLIENT_ID } = process.env;
+const { REDIRECT_URI } = process.env;
 interface AuthProviderProps {
     children: ReactNode;
 }
@@ -48,8 +48,6 @@ function AuthProvider({ children } : AuthProviderProps) {
 
             const RESPONSE_TYPE = 'token';
             const SCOPE = encodeURI('profile email');
-            const REDIRECT_URI = process.env.CLIENT_ID;
-            const CLIENT_ID = process.env.REDIRECT_URI;
 
             console.log(CLIENT_ID);
             console.log(REDIRECT_URI);
