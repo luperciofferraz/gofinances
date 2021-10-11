@@ -18,6 +18,7 @@ import { InputForm } from '../../components/Form/InputForm';
 import { TransactionTypeButton } from '../../components/Form/TransactionTypeButton';
 import { CategorySelectButton } from '../../components/Form/CategorySelectButton';
 import { CategorySelect } from '../CategorySelect';
+import { useAuth } from '../../hooks/auth';
 
 import { 
 
@@ -52,6 +53,8 @@ export function Register() {
     const [transactionType, setTransactionType] = useState('');
     const [categoryModalOpen, setCategoryModalOpen] = useState(false);
 
+    const { user } = useAuth();
+ 
     const [category, setCategory] = useState({
         key: 'category',
         name: 'Categoria'
@@ -82,7 +85,7 @@ export function Register() {
 
     async function handleRegister(form: FormData) {
 
-        const datakey = '@gofinances:transactions';
+        const datakey = `@gofinances:transactions_user:${user.id}`;
 
         if (!transactionType) {
             return Alert.alert('Selecione o Tipo de Transação');

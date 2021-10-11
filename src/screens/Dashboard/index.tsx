@@ -53,8 +53,13 @@ export function Dashboard() {
         type: 'positive' | 'negative'
     ) {
         
-        const lastTransaction = new Date(Math.max.apply(Math, collection
-            .filter((transaction : DataListProps) => transaction.type === type)
+        const collectionFilttered = collection.filter((transaction : DataListProps) => transaction.type === type);
+
+        if (collectionFilttered.length === 0) {
+            return 0;
+        }
+
+        const lastTransaction = new Date(Math.max.apply(Math, collectionFilttered
             .map((transaction : DataListProps) => new Date(transaction.date).getTime()))
         );
 
@@ -68,7 +73,7 @@ export function Dashboard() {
 
     async function loadTransactions() {
 
-        const datakey = '@gofinances:transactions';
+        const datakey = `@gofinances:transactions_user:${user.id}`;
         const response = await AsyncStorage.getItem(datakey);
         const transactions = response ? JSON.parse(response) : [];
 
@@ -120,7 +125,10 @@ export function Dashboard() {
 
         const lastTransactionEntries = getLastTransactionDate(transactions, 'positive');
         const lastTransactionExpensives = getLastTransactionDate(transactions, 'negative');
-        const totalInterval = `01 a ${lastTransactionExpensives}`;
+
+        const totalInterval = lastTransactionExpensives === 0 
+                              ? 'Não há transações'
+                              : `01 a ${lastTransactionExpensives}`;
 
         setHighlightData({
             
@@ -129,7 +137,9 @@ export function Dashboard() {
                     style: 'currency',
                     currency: 'BRL'
                 }),
-                lastTransaction: `Última entrada dia ${lastTransactionEntries}`
+                lastTransaction: lastTransactionEntries === 0
+                                 ? 'Não há transações' 
+                                 : `Última entrada dia ${lastTransactionEntries}`
             },    
 
             expensives: {
@@ -137,7 +147,9 @@ export function Dashboard() {
                     style: 'currency',
                     currency: 'BRL'
                 }),
-                lastTransaction: `Última entrada dia ${lastTransactionExpensives}`
+                lastTransaction: lastTransactionExpensives === 0  
+                                 ? 'Não há transações' 
+                                 : `Última saída dia ${lastTransactionExpensives}`
             },
 
             total: {

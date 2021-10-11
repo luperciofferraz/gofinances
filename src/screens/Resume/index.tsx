@@ -10,6 +10,7 @@ import { addMonths, subMonths, format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 import { HistoryCard } from '../../components/HistoryCard';
+import { useAuth } from '../../hooks/auth';
 
 import {
     
@@ -51,6 +52,7 @@ export function Resume() {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [totalsByCategory, setTotalsByCategory] = useState<CategoryData[]>([]);
     const theme = useTheme();
+    const { user } = useAuth(); 
 
     function handleDateChange(action: 'next' | 'prev') {
         
@@ -67,7 +69,7 @@ export function Resume() {
 
         setIsLoading(true);
 
-        const dataKey = '@gofinances:transactions';
+        const dataKey = `@gofinances:transactions_user:${user.id}`;
         const response = await AsyncStorage.getItem(dataKey);
         const responseFormatted = response ? JSON.parse(response) : [];
     
@@ -176,12 +178,14 @@ export function Resume() {
 
                             <VictoryPie
                                 data={totalsByCategory}
+                                cornerRadius={5}
+                                labelRadius={50}
                                 colorScale={totalsByCategory.map(category => category.color)}
                                 style={{
                                 labels: {
                                     fontSize: RFValue(18),
                                     fontWeight: 'bold',
-                                    fill: theme.colors.text_dark
+                                    fill: theme.colors.shape
                                 }
                                 }}
                                 x="percent"
